@@ -27,6 +27,7 @@ public class PlayScreen extends utils.states.PhysicsState {
     private MarioPlayer player;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private TextureAtlas textureAtlas;
+
     public PlayScreen(SpriteBatch spriteBatch){
         super(spriteBatch);
         textureAtlas = new TextureAtlas("mario.pack");
@@ -39,6 +40,7 @@ public class PlayScreen extends utils.states.PhysicsState {
         new ElementCreator(world,map);
         player = new MarioPlayer(world,textureAtlas, new Vector2());
     }
+
     @Override
     public void show() {
 
