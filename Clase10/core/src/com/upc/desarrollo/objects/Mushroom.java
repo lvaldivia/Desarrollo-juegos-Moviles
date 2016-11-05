@@ -17,6 +17,7 @@ public class Mushroom extends Item {
         super(world,textureAtlas,position);
         setRegion(textureAtlas.findRegion("mushroom"),0,0,16,16);
         setBounds(getX(),getY(),16/ Config.PPM,16/Config.PPM);
+        velocity = new Vector2(0.7f,0);
 
     }
     @Override
@@ -42,11 +43,16 @@ public class Mushroom extends Item {
     @Override
     public void update(float delta) {
         super.update(delta);
-        setPosition(body.getPosition().x - getWidth()/2,body.getPosition().y - getHeight()/2);
+        if(!destroyed){
+            setPosition(body.getPosition().x - getWidth()/2,body.getPosition().y - getHeight()/2);
+            velocity.y = body.getLinearVelocity().y;
+            body.setLinearVelocity(velocity);
+        }
     }
 
     @Override
     public void collect(Mario mario){
         mario.grow();
+        destroy();
     }
 }

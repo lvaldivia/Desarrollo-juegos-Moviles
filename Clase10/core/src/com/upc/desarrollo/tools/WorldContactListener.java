@@ -1,12 +1,15 @@
 package com.upc.desarrollo.tools;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.upc.desarrollo.Config;
+import com.upc.desarrollo.objects.Enemy;
 import com.upc.desarrollo.objects.InteractiveTiledObject;
+import com.upc.desarrollo.objects.Item;
 import com.upc.desarrollo.objects.Mario;
 import com.upc.desarrollo.objects.Mushroom;
 
@@ -34,15 +37,42 @@ public class WorldContactListener implements ContactListener {
                 }
                 break;
 
-
             case Config.ITEM_BIT | Config.MARIO_BIT:
                 if(fixtureA.getFilterData().categoryBits == Config.ITEM_BIT){
-                    ((Mushroom)fixtureA.getUserData()).collect((Mario) fixtureB.getUserData());
+                    ((Item)fixtureA.getUserData()).collect((Mario) fixtureB.getUserData());
                 }else {
-                    ((Mushroom)fixtureB.getUserData()).collect((Mario)fixtureA.getUserData());
+                    ((Item)fixtureB.getUserData()).collect((Mario)fixtureA.getUserData());
                 }
                 break;
 
+
+            case Config.ITEM_BIT | Config.OBJECT_BIT:
+                if(fixtureA.getFilterData().categoryBits == Config.ITEM_BIT){
+                    ((Item)fixtureA.getUserData()).reverseVelocity(true,false);
+                }else {
+                    ((Item)fixtureB.getUserData()).reverseVelocity(true,false);
+                }
+                break;
+
+            case Config.ENEMY_BIT | Config.OBJECT_BIT:
+                if(fixtureA.getFilterData().categoryBits == Config.ENEMY_BIT){
+                    ((Enemy)fixtureA.getUserData()).reverseVelocity(true,false);
+                }else {
+                    ((Enemy)fixtureB.getUserData()).reverseVelocity(true,false);
+                }
+                break;
+            case Config.ENEMY_BIT | Config.ENEMY_BIT:
+                ((Enemy)fixtureA.getUserData()).reverseVelocity(true,false);
+                ((Enemy)fixtureB.getUserData()).reverseVelocity(true,false);
+                break;
+
+            case Config.ENEMY_HEAD_BIT | Config.MARIO_BIT:
+                if(fixtureA.getFilterData().categoryBits == Config.ENEMY_HEAD_BIT){
+                    ((Enemy)fixtureA.getUserData()).hideOnHead();
+                }else{
+                    ((Enemy)fixtureB.getUserData()).hideOnHead();
+                }
+                break;
         }
     }
 

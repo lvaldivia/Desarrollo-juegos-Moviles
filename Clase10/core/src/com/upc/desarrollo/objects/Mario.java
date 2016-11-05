@@ -1,5 +1,6 @@
 package com.upc.desarrollo.objects;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,7 +11,7 @@ import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.upc.desarrollo.Config;
-
+import com.upc.desarrollo.CustomAssetManager;
 
 
 import utils.objects.PhysicsGameObject;
@@ -91,7 +92,8 @@ public class Mario extends PhysicsGameObject {
         shape.setRadius(5f/ Config.PPM);
         fixtureDef.filter.categoryBits = Config.MARIO_BIT;
         fixtureDef.filter.maskBits = Config.ITEM_BIT |
-                        Config.BRICK_BIT | Config.GROUND_BIT | Config.COIN_BIT | Config.OBJECT_BIT;
+                Config.ENEMY_BIT | Config.ENEMY_HEAD_BIT |
+                Config.BRICK_BIT | Config.GROUND_BIT | Config.COIN_BIT | Config.OBJECT_BIT;
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef).setUserData(this);
         shape.setPosition(new Vector2(0,-14/Config.PPM));
@@ -107,6 +109,9 @@ public class Mario extends PhysicsGameObject {
 
     public void grow(){
         if(!isBig){
+            Sound sound = CustomAssetManager.manager.get(CustomAssetManager.POWER_UP,
+                    Sound.class);
+            sound.play();
             runGrowAnimation = true;
             timeToDefineBigMario = true;
             isBig = true;
@@ -172,6 +177,7 @@ public class Mario extends PhysicsGameObject {
         shape.setRadius(5f/ Config.PPM);
         fixtureDef.filter.categoryBits = Config.MARIO_BIT;
         fixtureDef.filter.maskBits = Config.ITEM_BIT |
+                        Config.ENEMY_BIT | Config.ENEMY_HEAD_BIT |
                         Config.BRICK_BIT | Config.GROUND_BIT | Config.COIN_BIT | Config.OBJECT_BIT;
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef).setUserData(this);

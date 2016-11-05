@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.upc.desarrollo.Config;
 import com.upc.desarrollo.CustomAssetManager;
+import com.upc.desarrollo.objects.Enemy;
 import com.upc.desarrollo.objects.Item;
 import com.upc.desarrollo.objects.ItemDef;
 import com.upc.desarrollo.objects.Mario;
@@ -57,6 +58,7 @@ public class PlayScreen extends PhysicsState {
         world.setContactListener(new WorldContactListener());
         Music bg = CustomAssetManager.manager.get(CustomAssetManager.MARIO_MUSIC);
         bg.play();
+        bg.setVolume(0.5f);
         bg.setLooping(true);
         itemsToSpawn = new LinkedBlockingDeque<ItemDef>();
         items = new Array<Item>();
@@ -79,11 +81,14 @@ public class PlayScreen extends PhysicsState {
     public void render(float delta) {
         super.render(delta);
         tiledMapRenderer.render();
-        debugRenderer.render(world,camera.combined);
+        //debugRenderer.render(world,camera.combined);
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
         for(Item item: items){
             item.draw(spriteBatch);
+        }
+        for (Enemy enemy: creator.enemies) {
+            enemy.draw(spriteBatch);
         }
         player.draw(spriteBatch);
         spriteBatch.end();
@@ -97,6 +102,9 @@ public class PlayScreen extends PhysicsState {
         handleSpawningItems();
         for(Item item: items){
             item.update(delta);
+        }
+        for (Enemy enemy: creator.enemies) {
+            enemy.update(delta);
         }
         camera.position.x = player.body.getPosition().x;
         player.update(delta);

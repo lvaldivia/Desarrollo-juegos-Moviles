@@ -5,14 +5,18 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.upc.desarrollo.Config;
 import com.upc.desarrollo.objects.Brick;
 import com.upc.desarrollo.objects.Coin;
+import com.upc.desarrollo.objects.Enemy;
+import com.upc.desarrollo.objects.Goomba;
 
 
 /**
@@ -20,9 +24,10 @@ import com.upc.desarrollo.objects.Coin;
  */
 
 public class ElementCreator {
-
+    public Array<Enemy> enemies;
     public ElementCreator(World world, TiledMap map, TextureAtlas atlas){
         BodyDef bodyDef = new BodyDef();
+        enemies = new Array<Enemy>();
         PolygonShape shape = new PolygonShape();
         FixtureDef fixtureDef = new FixtureDef();
         Body body;
@@ -34,7 +39,7 @@ public class ElementCreator {
             shape.setAsBox(rect.getWidth()/2/Config.PPM,rect.getHeight()/2/Config.PPM);
             body = world.createBody(bodyDef);
             fixtureDef.shape = shape;
-            fixtureDef.filter.categoryBits = Config.OBJECT_BIT;
+            fixtureDef.filter.categoryBits = Config.GROUND_BIT;
             body.createFixture(fixtureDef);
         }
 
@@ -57,6 +62,15 @@ public class ElementCreator {
         for (MapObject mapObject: map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)){
             Rectangle rect = ((RectangleMapObject)mapObject).getRectangle();
             new Brick(world,atlas,map,rect);
+        }
+
+        for (MapObject mapObject: map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject)mapObject).getRectangle();
+            Vector2 position =new Vector2(
+                    (rect.getX() + rect.getWidth()/2)/Config.PPM,
+                    (rect.getY() + rect.getHeight()/2)/Config.PPM
+            );
+            enemies.add(new Goomba(world,atlas,position));
         }
     }
 }
