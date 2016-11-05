@@ -1,5 +1,6 @@
 package com.upc.desarrollo.tools;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -10,54 +11,52 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.upc.desarrollo.Config;
+import com.upc.desarrollo.objects.Brick;
+import com.upc.desarrollo.objects.Coin;
+
 
 /**
- * Created by Luis on 26/10/2016.
+ * Created by Luis on 04/11/2016.
  */
 
 public class ElementCreator {
-    private final int GROUND = 2;
-    private final int PIPE = 3;
-    private final int COIN = 4;
-    private final int BRICK = 5;
 
-    public enum Layers {
-        GROUND(2, "GROUND"),
-        PIPE(3, "PIPE"),
-        COIN(4, "COIN"),
-        BRICK(5, "BRICK");
-
-        private String stringValue;
-        private int intValue;
-
-        private Layers(int intValue, String stringValue) {
-            this.stringValue = stringValue;
-            this.intValue = intValue;
-        }
-    }
-
-    public ElementCreator(World world, TiledMap map) {
+    public ElementCreator(World world, TiledMap map, TextureAtlas atlas){
         BodyDef bodyDef = new BodyDef();
         PolygonShape shape = new PolygonShape();
         FixtureDef fixtureDef = new FixtureDef();
         Body body;
 
-        for (Layers layer : Layers.values()) {
-            for (MapObject mapObject :
-                    map.getLayers().get(layer.intValue).getObjects().getByType(RectangleMapObject.class)) {
-                Rectangle rect = ((RectangleMapObject) mapObject).getRectangle();
-                bodyDef.type = BodyDef.BodyType.StaticBody;
-                float positionX = (rect.getWidth() / 2 + rect.getX())/ Config.PPM;
-                float positionY = (rect.getHeight()/2+rect.getY())/Config.PPM;
-                bodyDef.position.set(positionX,
-                        positionY);
-                float width = rect.getWidth()/2/Config.PPM;
-                float height = rect.getHeight()/2/Config.PPM;
-                shape.setAsBox(width,height);
-                body = world.createBody(bodyDef);
-                fixtureDef.shape = shape;
-                body.createFixture(fixtureDef);
-            }
+        for (MapObject mapObject: map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject)mapObject).getRectangle();
+            bodyDef.type= BodyDef.BodyType.StaticBody;
+            bodyDef.position.set((rect.getX()+rect.getWidth()/2)/ Config.PPM,(rect.getY()+ rect.getHeight()/2)/Config.PPM);
+            shape.setAsBox(rect.getWidth()/2/Config.PPM,rect.getHeight()/2/Config.PPM);
+            body = world.createBody(bodyDef);
+            fixtureDef.shape = shape;
+            fixtureDef.filter.categoryBits = Config.OBJECT_BIT;
+            body.createFixture(fixtureDef);
+        }
+
+        for (MapObject mapObject: map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject)mapObject).getRectangle();
+            bodyDef.type= BodyDef.BodyType.StaticBody;
+            bodyDef.position.set((rect.getX()+rect.getWidth()/2)/Config.PPM,(rect.getY()+ rect.getHeight()/2)/Config.PPM);
+            shape.setAsBox(rect.getWidth()/2/Config.PPM,rect.getHeight()/2/Config.PPM);
+            body = world.createBody(bodyDef);
+            fixtureDef.shape = shape;
+            fixtureDef.filter.categoryBits = Config.OBJECT_BIT;
+            body.createFixture(fixtureDef);
+        }
+
+        for (MapObject mapObject: map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject)mapObject).getRectangle();
+            new Coin(world,atlas,map,rect);
+        }
+
+        for (MapObject mapObject: map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject)mapObject).getRectangle();
+            new Brick(world,atlas,map,rect);
         }
     }
 }

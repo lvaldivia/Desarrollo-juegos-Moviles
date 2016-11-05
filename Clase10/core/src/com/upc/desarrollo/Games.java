@@ -10,7 +10,7 @@ public class Games extends Game {
 	private SpriteBatch spriteBatch;
 	@Override
 	public void create () {
-
+        CustomAssetManager.init();
 		spriteBatch = new SpriteBatch();
 		setScreen(new PlayScreen(spriteBatch));
 	}
@@ -24,5 +24,6 @@ public class Games extends Game {
 	public void dispose () {
 		super.dispose();
 		spriteBatch.dispose();
+        CustomAssetManager.dispose();
 	}
 }

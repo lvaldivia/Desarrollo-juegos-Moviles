@@ -13,6 +13,14 @@ import com.badlogic.gdx.physics.box2d.World;
 public abstract class PhysicsGameObject extends GameObject {
     protected World world;
     public Body body;
+    protected boolean setToDestroy;
+    protected boolean destroyed;
+
+
+    public PhysicsGameObject(World world){
+        super();
+        this.world = world;
+    }
 
     public PhysicsGameObject(World world, TextureAtlas textureAtlas, Vector2 position){
         super(textureAtlas, position);
@@ -24,6 +32,10 @@ public abstract class PhysicsGameObject extends GameObject {
         super(textureRegion,position);
         this.world = world;
         defineBody();
+    }
+
+    protected void destroy(){
+        setToDestroy = true;
     }
 
     public abstract void defineBody();

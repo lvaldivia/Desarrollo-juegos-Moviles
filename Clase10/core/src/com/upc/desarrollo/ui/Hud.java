@@ -14,11 +14,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.upc.desarrollo.Config;
 
 /**
- * Created by Luis on 22/10/2016.
+ * Created by Luis on 04/11/2016.
  */
 
 public class Hud implements Disposable {
-
     private Viewport viewport;
     private Stage stage;
     private SpriteBatch sp;
@@ -30,11 +29,14 @@ public class Hud implements Disposable {
     private Label scoreLabel;
     private int worldTimer;
     private int score;
+    private float timeCount;
 
     public Hud(SpriteBatch sp){
         this.sp = sp;
-        viewport = new FitViewport(Config.GAME_WIDTH,Config.GAME_HEIGHT,
-                new OrthographicCamera());
+        worldTimer = 300;
+        timeCount = 0;
+        score = 0;
+        viewport = new FitViewport(Config.GAME_WIDTH,Config.GAME_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport,sp);
         countdownLabel = new Label(String.format("%03d",worldTimer),
                 new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -60,6 +62,11 @@ public class Hud implements Disposable {
         table.add(countdownLabel).expandX();
         stage.addActor(table);
     }
+
+    public void update(float delta){
+
+    }
+
 
     public Camera getCamera(){
         return stage.getCamera();
