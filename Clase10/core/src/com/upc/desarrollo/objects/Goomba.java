@@ -2,6 +2,7 @@ package com.upc.desarrollo.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -42,6 +43,7 @@ public class Goomba extends Enemy {
         if(setToDestroy && !destroyed){
             destroyed = true;
             world.destroyBody(body);
+            stateTime = 0;
             setRegion(hitRegion);
         }
         else if(!destroyed){
@@ -50,7 +52,6 @@ public class Goomba extends Enemy {
             body.setLinearVelocity(velocity);
             setRegion(walkAnimation.getKeyFrame(stateTime,true));
         }
-
     }
 
     @Override

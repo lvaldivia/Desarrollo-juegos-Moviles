@@ -73,6 +73,13 @@ public class WorldContactListener implements ContactListener {
                     ((Enemy)fixtureB.getUserData()).hideOnHead();
                 }
                 break;
+            case Config.MARIO_BIT | Config.ENEMY_BIT:
+                if(fixtureA.getFilterData().categoryBits == Config.MARIO_BIT){
+                    ((Mario)fixtureA.getUserData()).hit((Enemy)fixtureB.getUserData());
+                }else{
+                    ((Mario)fixtureB.getUserData()).hit((Enemy)fixtureB.getUserData());
+                }
+                break;
         }
     }
 

@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.upc.desarrollo.Config;
@@ -32,6 +34,8 @@ public class Mario extends PhysicsGameObject {
     private boolean isBig;
     private boolean runGrowAnimation;
     private boolean timeToDefineBigMario;
+    private TextureRegion deadAnimation;
+    private boolean timeToRedifineMario, isDead;
 
     private TextureRegion bigMarioJump, bigMarioStand;
     private Animation bigMarioRunning;
@@ -39,7 +43,8 @@ public class Mario extends PhysicsGameObject {
         super(world,textureAtlas,position);
         currentState = Status.STANDING;
         prevState = Status.STANDING;
-
+        timeToRedifineMario = false;
+        isDead = false;
         runningRight = true;
         for (int i = 1; i < 4; i++) {
             frames.add(new TextureRegion(textureAtlas.findRegion("little_mario"),i * 16,0,16,16));
@@ -48,6 +53,7 @@ public class Mario extends PhysicsGameObject {
 
         marioStand = new TextureRegion(textureAtlas.findRegion("little_mario"),0,0,16,16);
         marioJumping = new TextureRegion(textureAtlas.findRegion("little_mario"),80,0,16,16);
+        deadAnimation = new TextureRegion(textureAtlas.findRegion("little_mario"),96,0,16,16);
         setBounds(0,0,16/Config.PPM,16/Config.PPM);
         setRegion(marioStand);
 
@@ -77,6 +83,9 @@ public class Mario extends PhysicsGameObject {
         setRegion(getFrame(delta));
         if(timeToDefineBigMario){
             defineBigMario();
+        }
+        if(timeToRedifineMario){
+            redifineMario();
         }
     }
 
@@ -119,10 +128,31 @@ public class Mario extends PhysicsGameObject {
         }
     }
 
+    public void hit(Enemy enemy){
+        if(isBig){
+            isBig = false;
+            timeToRedifineMario = true;
+            redifineMario();
+        }else{
+            isDead = true;
+            Filter filter =new Filter();
+            filter.categoryBits = Config.NOTHING;
+            for (Fixture fix:body.getFixtureList()) {
+                fix.setFilterData(filter);
+            }
+        }
+    }
+
+    private void redifineMario() {
+    }
+
     public TextureRegion getFrame(float delta){
         currentState =getState();
         TextureRegion region = new TextureRegion();
         switch (currentState){
+            case DEAD:
+                region = deadAnimation;
+                break;
             case GROWING:
                 region = marioGrowing.getKeyFrame(stateTime);
                 if(marioGrowing.isAnimationFinished(stateTime)){
@@ -154,7 +184,10 @@ public class Mario extends PhysicsGameObject {
     }
 
     public Status getState(){
-        if(runGrowAnimation){
+        if(isDead){
+            return Status.DEAD;
+        }
+        else if(runGrowAnimation){
             return Status.GROWING;
         }
         else if(body.getLinearVelocity().y>0 || (body.getLinearVelocity().y<0 && prevState == Status.JUMPING))
