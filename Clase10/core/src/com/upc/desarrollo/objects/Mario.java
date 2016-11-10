@@ -1,5 +1,6 @@
 package com.upc.desarrollo.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -88,6 +89,11 @@ public class Mario extends PhysicsGameObject {
         if(timeToRedifineMario){
             redifineMario();
         }
+
+        if(getY()<-getHeight()){
+            isDead = true;
+            destroy();
+        }
     }
 
     private void defineBigMario(){
@@ -130,25 +136,34 @@ public class Mario extends PhysicsGameObject {
     }
 
     public void hit(Enemy enemy){
-        if(isBig){
+        if(enemy instanceof Turtle && ((Turtle)enemy).current ==
+                                Turtle.Status.STANDING_SHELL){
+            Turtle turtle = (Turtle) enemy;
+            turtle.kick(this.getX()<turtle.getX() ? Turtle.RIGHT_SPEED : Turtle.LEFT_SPEED);
+        }
+        else if(isBig){
             isBig = false;
             timeToRedifineMario = true;
             setBounds(getX(),getY(),getWidth(),getHeight()/2f);
             Sound dead = CustomAssetManager.manager.get(CustomAssetManager.POWER_DOWN,Sound.class);
             dead.play();
         }else{
-            isDead = true;
-            Filter filter =new Filter();
-            filter.maskBits = Config.NOTHING;
-            for (Fixture fix:body.getFixtureList()) {
-                fix.setFilterData(filter);
-            }
-            body.applyLinearImpulse(new Vector2(0,4f),body.getWorldCenter(),true);
-            Music bg = CustomAssetManager.manager.get(CustomAssetManager.MARIO_MUSIC,Music.class);
-            bg.stop();
-            Sound dead = CustomAssetManager.manager.get(CustomAssetManager.DEAD,Sound.class);
-            dead.play();
+            kill();
         }
+    }
+
+    public void kill(){
+        isDead = true;
+        Filter filter =new Filter();
+        filter.maskBits = Config.NOTHING;
+        for (Fixture fix:body.getFixtureList()) {
+            fix.setFilterData(filter);
+        }
+        body.applyLinearImpulse(new Vector2(0,4f),body.getWorldCenter(),true);
+        Music bg = CustomAssetManager.manager.get(CustomAssetManager.MARIO_MUSIC,Music.class);
+        bg.stop();
+        Sound dead = CustomAssetManager.manager.get(CustomAssetManager.DEAD,Sound.class);
+        dead.play();
     }
 
     private void redifineMario() {
@@ -176,6 +191,7 @@ public class Mario extends PhysicsGameObject {
         timeToRedifineMario = false;
     }
 
+    @Override
     public TextureRegion getFrame(float delta){
         currentState =getState();
         TextureRegion region = new TextureRegion();
@@ -199,7 +215,6 @@ public class Mario extends PhysicsGameObject {
             case STANDING:
                 region = isBig ? bigMarioStand : marioStand;
                 break;
-
         }
         if((body.getLinearVelocity().x<0 || !runningRight) && !region.isFlipX()){
             region.flip(true,false);
@@ -250,5 +265,11 @@ public class Mario extends PhysicsGameObject {
         fixtureDef.isSensor = true;
         fixtureDef.filter.categoryBits = Config.MARIO_HEAD_BIT;
         body.createFixture(fixtureDef).setUserData(this);
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+
     }
 }

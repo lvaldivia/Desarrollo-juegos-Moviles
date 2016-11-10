@@ -6,12 +6,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 
 /**
  * Created by Luis on 22/10/2016.
  */
 
-public class GameObject extends Sprite {
+public class GameObject extends Sprite implements Disposable {
 
     protected TextureAtlas atlas;
     protected Vector2 position;
@@ -41,7 +42,17 @@ public class GameObject extends Sprite {
         stateTime = 0f;
     }
 
+    public TextureRegion getFrame(float delta){
+        return new TextureRegion();
+    }
+
+
     public void update(float dt){
+
+    }
+
+    @Override
+    public void dispose() {
 
     }
 }

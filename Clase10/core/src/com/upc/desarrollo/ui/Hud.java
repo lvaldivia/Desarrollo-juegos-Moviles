@@ -27,11 +27,14 @@ public class Hud implements Disposable {
     private Label levelLabel;
     private Label worldLabel;
     private Label scoreLabel;
-    private int worldTimer;
-    private int score;
+    public int worldTimer;
+    public int score;
     private float timeCount;
 
+    public static Hud instance;
+
     public Hud(SpriteBatch sp){
+        instance = this;
         this.sp = sp;
         worldTimer = 300;
         timeCount = 0;
@@ -64,7 +67,17 @@ public class Hud implements Disposable {
     }
 
     public void update(float delta){
+        timeCount+=delta;
+        if(timeCount>=1f){
+            worldTimer--;
+            timeCount = 0;
+            countdownLabel.setText(String.format("%03d",worldTimer));
+        }
+    }
 
+    public void updateScore(int score){
+        this.score +=score;
+        this.scoreLabel.setText(String.format("%06d",this.score));
     }
 
 

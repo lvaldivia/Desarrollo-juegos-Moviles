@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.upc.desarrollo.Config;
+import com.upc.desarrollo.ui.Hud;
 
 /**
  * Created by Luis on 04/11/2016.
@@ -52,6 +53,7 @@ public class Mushroom extends Item {
 
     @Override
     public void collect(Mario mario){
+        Hud.instance.updateScore(100);
         mario.grow();
         destroy();
     }

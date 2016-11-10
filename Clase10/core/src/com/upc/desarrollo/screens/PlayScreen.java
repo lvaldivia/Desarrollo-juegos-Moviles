@@ -3,6 +3,7 @@ package com.upc.desarrollo.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.upc.desarrollo.Config;
 import com.upc.desarrollo.CustomAssetManager;
+import com.upc.desarrollo.Games;
 import com.upc.desarrollo.objects.Enemy;
 import com.upc.desarrollo.objects.Item;
 import com.upc.desarrollo.objects.ItemDef;
@@ -33,7 +35,6 @@ import utils.states.PhysicsState;
 
 public class PlayScreen extends PhysicsState {
     protected TextureAtlas textureAtlas;
-    protected Viewport viewport;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private TmxMapLoader mapLoader;
     private TiledMap map;
@@ -43,9 +44,11 @@ public class PlayScreen extends PhysicsState {
     private Mario player;
     private LinkedBlockingDeque<ItemDef> itemsToSpawn;
     private Array<Item> items;
+    private float elapsedDead;
     public PlayScreen(SpriteBatch spriteBatch) {
         super(spriteBatch);
         instance = this;
+        elapsedDead = 0;
         textureAtlas = new TextureAtlas("mario.pack");
         viewport = new FitViewport(Config.GAME_WIDTH/Config.PPM,Config.GAME_HEIGHT/Config.PPM,camera);
         hud = new Hud(spriteBatch);
@@ -113,6 +116,18 @@ public class PlayScreen extends PhysicsState {
         camera.update();
         tiledMapRenderer.setView(camera);
         hud.update(delta);
+        if(player.getState() == Mario.Status.DEAD){
+            elapsedDead+=delta;
+            if(elapsedDead>=2f){
+                elapsedDead = 0;
+                Games.instance.setScreen(new GameOver(spriteBatch));
+                dispose();
+
+            }
+        }
+        if(hud.worldTimer<=0f){
+            player.kill();
+        }
     }
 
     @Override
@@ -140,7 +155,9 @@ public class PlayScreen extends PhysicsState {
     @Override
     public void dispose() {
         tiledMapRenderer.dispose();
-        debugRenderer.dispose();
+        //debugRenderer.dispose();
         hud.dispose();
+        //world.dispose();
+        map.dispose();
     }
 }

@@ -62,8 +62,8 @@ public class WorldContactListener implements ContactListener {
                 }
                 break;
             case Config.ENEMY_BIT | Config.ENEMY_BIT:
-                ((Enemy)fixtureA.getUserData()).reverseVelocity(true,false);
-                ((Enemy)fixtureB.getUserData()).reverseVelocity(true,false);
+                ((Enemy)fixtureA.getUserData()).onEnemyHit((Enemy)fixtureB.getUserData());
+                ((Enemy)fixtureB.getUserData()).onEnemyHit((Enemy)fixtureA.getUserData());
                 break;
 
             case Config.ENEMY_HEAD_BIT | Config.MARIO_BIT:

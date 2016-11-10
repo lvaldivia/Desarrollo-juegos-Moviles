@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.upc.desarrollo.Config;
+import com.upc.desarrollo.ui.Hud;
 
 import utils.objects.PhysicsGameObject;
 
@@ -55,7 +56,17 @@ public class Goomba extends Enemy {
     }
 
     @Override
+    public void onEnemyHit(Enemy enemy) {
+        if(enemy instanceof Turtle && ((Turtle)enemy).current == Turtle.Status.MOVING_SHELL){
+            destroy();
+        }else{
+            reverseVelocity(true,false);
+        }
+    }
+
+    @Override
     public void hideOnHead() {
+        Hud.instance.updateScore(100);
         destroy();
     }
 }

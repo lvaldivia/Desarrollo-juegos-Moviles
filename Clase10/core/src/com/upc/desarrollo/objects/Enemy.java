@@ -46,4 +46,5 @@ public abstract class Enemy extends PhysicsGameObject {
     }
 
     public abstract void hideOnHead();
+    public abstract void onEnemyHit(Enemy enemy);
 }
