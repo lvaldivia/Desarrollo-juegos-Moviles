@@ -16,6 +16,8 @@ public class CustomAssetManager {
     public static final String BUMP_SOUND = "audio/sounds/bump.wav";
     public static final String BREAK_BLOCK_BUMP = "audio/sounds/breakblock.wav";
     public static final String POWER_UP = "audio/sounds/powerup.wav";
+    public static final String POWER_DOWN = "audio/sounds/powerdown.wav";
+    public static final String DEAD = "audio/sounds/mariodie.wav";
 
     public static void init(){
         manager = new AssetManager();
@@ -24,6 +26,8 @@ public class CustomAssetManager {
         manager.load(BUMP_SOUND, Sound.class);
         manager.load(BREAK_BLOCK_BUMP, Sound.class);
         manager.load(POWER_UP, Sound.class);
+        manager.load(DEAD, Sound.class);
+        manager.load(POWER_DOWN, Sound.class);
         manager.finishLoading();
     }
 

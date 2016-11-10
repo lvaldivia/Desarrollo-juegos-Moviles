@@ -81,7 +81,7 @@ public class PlayScreen extends PhysicsState {
     public void render(float delta) {
         super.render(delta);
         tiledMapRenderer.render();
-        //debugRenderer.render(world,camera.combined);
+        debugRenderer.render(world,camera.combined);
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
         for(Item item: items){
@@ -106,7 +106,9 @@ public class PlayScreen extends PhysicsState {
         for (Enemy enemy: creator.enemies) {
             enemy.update(delta);
         }
-        camera.position.x = player.body.getPosition().x;
+        if(player.getState() != Mario.Status.DEAD) {
+            camera.position.x = player.body.getPosition().x;
+        }
         player.update(delta);
         camera.update();
         tiledMapRenderer.setView(camera);
@@ -121,14 +123,16 @@ public class PlayScreen extends PhysicsState {
 
     @Override
     public void handleInput(float delta){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP) && player.body.getLinearVelocity().y ==0f){
-            player.body.applyLinearImpulse(new Vector2(0,4f),player.body.getWorldCenter(),true);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.body.getLinearVelocity().x>-2f){
-            player.body.applyLinearImpulse(new Vector2(-0.1f,0),player.body.getWorldCenter(),true);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.body.getLinearVelocity().x<=2f){
-            player.body.applyLinearImpulse(new Vector2(0.1f,0),player.body.getWorldCenter(),true);
+        if(player.getState() != Mario.Status.DEAD){
+            if(Gdx.input.isKeyJustPressed(Input.Keys.UP) && player.body.getLinearVelocity().y ==0f){
+                player.body.applyLinearImpulse(new Vector2(0,4f),player.body.getWorldCenter(),true);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.body.getLinearVelocity().x>-2f){
+                player.body.applyLinearImpulse(new Vector2(-0.1f,0),player.body.getWorldCenter(),true);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.body.getLinearVelocity().x<=2f){
+                player.body.applyLinearImpulse(new Vector2(0.1f,0),player.body.getWorldCenter(),true);
+            }
         }
     }
 

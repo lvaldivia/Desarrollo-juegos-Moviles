@@ -1,5 +1,6 @@
 package com.upc.desarrollo.objects;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -132,18 +133,47 @@ public class Mario extends PhysicsGameObject {
         if(isBig){
             isBig = false;
             timeToRedifineMario = true;
-            redifineMario();
+            setBounds(getX(),getY(),getWidth(),getHeight()/2f);
+            Sound dead = CustomAssetManager.manager.get(CustomAssetManager.POWER_DOWN,Sound.class);
+            dead.play();
         }else{
             isDead = true;
             Filter filter =new Filter();
-            filter.categoryBits = Config.NOTHING;
+            filter.maskBits = Config.NOTHING;
             for (Fixture fix:body.getFixtureList()) {
                 fix.setFilterData(filter);
             }
+            body.applyLinearImpulse(new Vector2(0,4f),body.getWorldCenter(),true);
+            Music bg = CustomAssetManager.manager.get(CustomAssetManager.MARIO_MUSIC,Music.class);
+            bg.stop();
+            Sound dead = CustomAssetManager.manager.get(CustomAssetManager.DEAD,Sound.class);
+            dead.play();
         }
     }
 
     private void redifineMario() {
+        Vector2 currentPosition = body.getPosition();
+        world.destroyBody(body);
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.position.set(currentPosition);
+        bodyDef.type =BodyDef.BodyType.DynamicBody;
+        body = world.createBody(bodyDef);
+        FixtureDef fixtureDef = new FixtureDef();
+        CircleShape shape = new CircleShape();
+        shape.setRadius(5f/ Config.PPM);
+        fixtureDef.filter.categoryBits = Config.MARIO_BIT;
+        fixtureDef.filter.maskBits = Config.ITEM_BIT |
+                Config.ENEMY_BIT | Config.ENEMY_HEAD_BIT |
+                Config.BRICK_BIT | Config.GROUND_BIT | Config.COIN_BIT | Config.OBJECT_BIT;
+        fixtureDef.shape = shape;
+        body.createFixture(fixtureDef).setUserData(this);
+        EdgeShape head = new EdgeShape();
+        head.set(new Vector2(-2/Config.PPM,7/Config.PPM),new Vector2(2/Config.PPM,7/Config.PPM));
+        fixtureDef.shape = head;
+        fixtureDef.isSensor = true;
+        fixtureDef.filter.categoryBits = Config.MARIO_HEAD_BIT;
+        body.createFixture(fixtureDef).setUserData(this);
+        timeToRedifineMario = false;
     }
 
     public TextureRegion getFrame(float delta){

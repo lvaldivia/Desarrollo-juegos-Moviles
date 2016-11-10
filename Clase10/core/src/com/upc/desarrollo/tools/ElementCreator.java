@@ -17,6 +17,7 @@ import com.upc.desarrollo.objects.Brick;
 import com.upc.desarrollo.objects.Coin;
 import com.upc.desarrollo.objects.Enemy;
 import com.upc.desarrollo.objects.Goomba;
+import com.upc.desarrollo.objects.Turtle;
 
 
 /**
@@ -71,6 +72,15 @@ public class ElementCreator {
                     (rect.getY() + rect.getHeight()/2)/Config.PPM
             );
             enemies.add(new Goomba(world,atlas,position));
+        }
+
+        for (MapObject mapObject: map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject)mapObject).getRectangle();
+            Vector2 position =new Vector2(
+                    (rect.getX() + rect.getWidth()/2)/Config.PPM,
+                    (rect.getY() + rect.getHeight()/2)/Config.PPM
+            );
+            enemies.add(new Turtle(world,atlas,position));
         }
     }
 }

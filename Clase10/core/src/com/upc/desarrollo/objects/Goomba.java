@@ -55,32 +55,6 @@ public class Goomba extends Enemy {
     }
 
     @Override
-    public void defineBody() {
-        super.defineBody();
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(getX(),getY());
-        bodyDef.type =BodyDef.BodyType.DynamicBody;
-        body = world.createBody(bodyDef);
-        FixtureDef fixtureDef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setRadius(5f/ Config.PPM);
-        fixtureDef.filter.categoryBits = Config.ENEMY_BIT;
-        fixtureDef.filter.maskBits = Config.ENEMY_BIT |
-                Config.MARIO_BIT | Config.GROUND_BIT | Config.OBJECT_BIT;
-        fixtureDef.shape = shape;
-        body.createFixture(fixtureDef).setUserData(this);
-        EdgeShape head = new EdgeShape();
-        head.set(new Vector2(-2/Config.PPM,7/Config.PPM),new Vector2(2/Config.PPM,7/Config.PPM));
-        fixtureDef.shape = head;
-        fixtureDef.restitution = 0.5f;
-        fixtureDef.isSensor = true;
-        fixtureDef.filter.categoryBits = Config.ENEMY_HEAD_BIT;
-        fixtureDef.filter.maskBits = Config.MARIO_BIT;
-        body.createFixture(fixtureDef).setUserData(this);
-
-    }
-
-    @Override
     public void hideOnHead() {
         destroy();
     }
